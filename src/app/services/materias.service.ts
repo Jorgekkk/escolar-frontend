@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 export class MateriasService {
 
   // CAMBIO: Usamos la variable de entorno en lugar del texto fijo
-  private baseUrl: string = environment.url_api;
+  private baseUrl: string = environment.url_api + '/';
 
   constructor(
     private http: HttpClient,
