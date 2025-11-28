@@ -38,7 +38,7 @@ export class AdministradoresService {
     }
   }
 
-  //Validación para el formulario
+  
   public validarAdmin(data: any, editar: boolean) {
     console.log("Validando admin... ", data);
     let error: any = {};
@@ -100,75 +100,51 @@ export class AdministradoresService {
       error["ocupacion"] = this.errorService.required;
     }
 
-    //Return arreglo
     return error;
   }
 
-  //Aquí van los servicios HTTP
-  //Servicio para registrar un nuevo usuario
-  public registrarAdmin(data: any): Observable<any> {
-    // Verificamos si existe el token de sesión
+  
+  private getHeaders(): HttpHeaders {
     const token = this.facadeService.getSessionToken();
     let headers: HttpHeaders;
     if (token) {
       headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
     } else {
       headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+      console.log("No se encontró el token del usuario");
     }
-    return this.http.post<any>(`${environment.url_api}/admin/`, data, { headers });
+    return headers;
+  }
+
+  
+
+  //Servicio para registrar un nuevo usuario
+  public registrarAdmin(data: any): Observable<any> {
+    return this.http.post<any>(`${environment.url_api}/admin/`, data, { headers: this.getHeaders() });
   }
 
   // Petición para obtener la lista de administradores
   public obtenerListaAdmins(): Observable<any> {
-    const token = this.facadeService.getSessionToken();
-    let headers: HttpHeaders;
-    if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    } else {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-      console.log("No se encontró el token del usuario");
-
-    }
-    return this.http.get<any>(`${environment.url_api}/lista-admins/`, { headers });
+    return this.http.get<any>(`${environment.url_api}/lista-admins/`, { headers: this.getHeaders() });
   }
 
-  // Petición para obtener un administrador por su ID
+  
   public obtenerAdminPorID(idAdmin: number): Observable<any> {
-    const token = this.facadeService.getSessionToken();
-    let headers: HttpHeaders;
-    if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    } else {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-      console.log("No se encontró el token del usuario");
-    }
-    return this.http.get<any>(`${environment.url_api}/admin/?id=${idAdmin}`, { headers });
+    return this.http.get<any>(`${environment.url_api}/admin/?id=${idAdmin}`, { headers: this.getHeaders() });
   }
 
-  // Petición para actualizar un administrador
+ 
   public actualizarAdmin(data: any): Observable<any> {
-    const token = this.facadeService.getSessionToken();
-    let headers: HttpHeaders;
-    if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    } else {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-      console.log("No se encontró el token del usuario");
-    }
-    return this.http.put<any>(`${environment.url_api}/admin/`, data, { headers });
+    return this.http.put<any>(`${environment.url_api}/admin/`, data, { headers: this.getHeaders() });
   }
 
-  // Servicio para obtener el total de usuarios registrados por rol
+  
   public getTotalUsuarios(): Observable<any>{
-    const token = this.facadeService.getSessionToken();
-    let headers: HttpHeaders;
-    if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    } else {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-      console.log("No se encontró el token del usuario");
-    }
-    return this.http.get<any>(`${environment.url_api}/total-usuarios/`, { headers });
+    return this.http.get<any>(`${environment.url_api}/total-usuarios/`, { headers: this.getHeaders() });
+  }
+
+  
+  public eliminarAdmin(idAdmin: number): Observable<any> {
+    return this.http.delete<any>(`${environment.url_api}/admin/?id=${idAdmin}`, { headers: this.getHeaders() });
   }
 }
-

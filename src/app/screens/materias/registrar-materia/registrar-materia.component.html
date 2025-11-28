@@ -1,0 +1,137 @@
+<div class="container-fluid" style="padding: 20px;">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="titulo-pantalla">{{ isEdit ? 'Editar Materia' : 'Registrar Materia' }}</h1>
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <div class="section-registro">
+      <form [formGroup]="form" (ngSubmit)="registrar()">
+
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>NRC</mat-label>
+              <input matInput formControlName="nrc" placeholder="Ej. 54321" type="number">
+              <mat-error *ngIf="form.get('nrc')?.hasError('required')">El NRC es requerido</mat-error>
+              <mat-error *ngIf="form.get('nrc')?.hasError('minlength')">Mínimo 5 dígitos</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nombre de la materia</mat-label>
+              <input matInput formControlName="nombre_materia" placeholder="Ej. Bases de Datos">
+              <mat-error *ngIf="form.get('nombre_materia')?.hasError('pattern')">Solo letras y espacios</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Sección</mat-label>
+              <input matInput formControlName="seccion" type="number" placeholder="Ej. 101">
+              <mat-error *ngIf="form.get('seccion')?.hasError('maxlength')">Máximo 3 dígitos</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Salón</mat-label>
+              <input matInput formControlName="salon" placeholder="Ej. CC-102">
+              <mat-error *ngIf="form.get('salon')?.hasError('maxlength')">Máximo 15 caracteres</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <label class="form-label">Días de la semana:</label> <br>
+            <div class="dias-container">
+              <mat-checkbox *ngFor="let dia of dias_semana"
+                            [checked]="dia.checked"
+                            [value]="dia.value"
+                            (change)="checkboxChange($event)"
+                            class="mr-3">
+                {{ dia.nombre }}
+              </mat-checkbox>
+            </div>
+            <small class="text-danger" *ngIf="form.get('dias')?.invalid && form.get('dias')?.touched">
+              Selecciona al menos un día.
+            </small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Hora Inicio</mat-label>
+              <input matInput [ngxTimepicker]="pickerInicio" formControlName="hora_inicio" readonly>
+              <ngx-material-timepicker-toggle matSuffix [for]="pickerInicio"></ngx-material-timepicker-toggle>
+              <ngx-material-timepicker #pickerInicio [format]="24"></ngx-material-timepicker>
+
+              <mat-error *ngIf="form.get('hora_inicio')?.hasError('required')">
+                Requerido
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Hora Fin</mat-label>
+              <input matInput [ngxTimepicker]="pickerFin" formControlName="hora_fin" readonly>
+              <ngx-material-timepicker-toggle matSuffix [for]="pickerFin"></ngx-material-timepicker-toggle>
+              <ngx-material-timepicker #pickerFin [format]="24"></ngx-material-timepicker>
+
+              <mat-error *ngIf="form.get('hora_fin')?.hasError('required')">
+                Requerido
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Programa Educativo</mat-label>
+              <mat-select formControlName="programa_educativo">
+                <mat-option *ngFor="let programa of programas" [value]="programa.value">
+                  {{ programa.viewValue }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Profesor Asignado</mat-label>
+              <mat-select formControlName="profesor">
+                <mat-option *ngFor="let maestro of lista_maestros" [value]="maestro.id">
+                  {{ maestro.nombre_completo }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('profesor')?.hasError('required')">Debes asignar un profesor</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Créditos</mat-label>
+              <input matInput formControlName="creditos" type="number">
+              <mat-error *ngIf="form.get('creditos')?.hasError('pattern')">Solo números enteros</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12 text-center">
+            <button mat-raised-button color="warn" type="button" (click)="regresar()" style="margin-right: 10px;">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit">{{ isEdit ? 'Actualizar' : 'Registrar' }}</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

@@ -14,6 +14,8 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class MaestrosService {
+  obtenerMaestros() {
+  }
 
   constructor(
     private http: HttpClient,
@@ -40,7 +42,7 @@ export class MaestrosService {
     }
   }
 
-  //Validación para el formulario
+  // Validación para el formulario
   public validarMaestro(data: any, editar: boolean){
     console.log("Validando maestro... ", data);
     let error: any = [];
@@ -69,7 +71,6 @@ export class MaestrosService {
       if(!this.validatorService.required(data["password"])){
         error["password"] = this.errorService.required;
       }
-
       if(!this.validatorService.required(data["confirmar_password"])){
         error["confirmar_password"] = this.errorService.required;
       }
@@ -83,10 +84,10 @@ export class MaestrosService {
       error["rfc"] = this.errorService.required;
     }else if(!this.validatorService.min(data["rfc"], 12)){
       error["rfc"] = this.errorService.min(12);
-      alert("La longitud de caracteres deL RFC es menor, deben ser 12");
+      alert("La longitud de caracteres del RFC es menor, deben ser 12");
     }else if(!this.validatorService.max(data["rfc"], 13)){
       error["rfc"] = this.errorService.max(13);
-      alert("La longitud de caracteres deL RFC es mayor, deben ser 13");
+      alert("La longitud de caracteres del RFC es mayor, deben ser 13");
     }
 
     if(!this.validatorService.required(data["telefono"])){
@@ -104,47 +105,46 @@ export class MaestrosService {
     if(!this.validatorService.required(data["materias_json"])){
       error["materias_json"] = "Debes seleccionar materias para poder registrarte";
     }
-    //Return arreglo
     return error;
   }
 
-  //Aquí van los servicios HTTP
-  //Servicio para registrar un nuevo usuario
-  public registrarMaestro (data: any): Observable <any>{
-    // Verificamos si existe el token de sesión
+
+  private getHeaders(): HttpHeaders {
     const token = this.facadeService.getSessionToken();
-    let headers: HttpHeaders;
     if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    } else {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+      return new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      });
     }
-    return this.http.post<any>(`${environment.url_api}/maestros/`, data, { headers });
+    return new HttpHeaders({ 'Content-Type': 'application/json' });
   }
 
-  //Servicio para obtener la lista de maestros
+
+
+  // REGISTRAR (POST)
+  public registrarMaestro(data: any): Observable<any>{
+    return this.http.post<any>(`${environment.url_api}/maestros/`, data, { headers: this.getHeaders() });
+  }
+
+  // LISTAR (GET)
   public obtenerListaMaestros(): Observable<any>{
-    // Verificamos si existe el token de sesión
-    const token = this.facadeService.getSessionToken();
-    let headers: HttpHeaders;
-    if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    } else {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    }
-    return this.http.get<any>(`${environment.url_api}/lista-maestros/`, { headers });
+    return this.http.get<any>(`${environment.url_api}/lista-maestros/`, { headers: this.getHeaders() });
   }
 
-  //Servicio para eliminar un maestro
+  // OBTENER POR ID (GET) -> ESTE ES EL QUE PRE-CARGA DATOS
+  // Corrección: Usa ?id= y envía headers con token
+  public obtenerMaestroPorID(idUser: number): Observable<any>{
+    return this.http.get<any>(`${environment.url_api}/maestros/?id=${idUser}`, { headers: this.getHeaders() });
+  }
+
+  // EDITAR (PUT) -> ESTE ES EL QUE GUARDA CAMBIOS
+  public editarMaestro(data: any): Observable<any>{
+    return this.http.put<any>(`${environment.url_api}/maestros/`, data, { headers: this.getHeaders() });
+  }
+
+  // ELIMINAR (DELETE)
   public eliminarMaestro(idMaestro: number): Observable<any>{
-    // Verificamos si existe el token de sesión
-    const token = this.facadeService.getSessionToken();
-    let headers: HttpHeaders;
-    if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
-    } else {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    }
-    return this.http.delete<any>(`${environment.url_api}/maestros/?id=${idMaestro}`, { headers });
+    return this.http.delete<any>(`${environment.url_api}/maestros/?id=${idMaestro}`, { headers: this.getHeaders() });
   }
 }

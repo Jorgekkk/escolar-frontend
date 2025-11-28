@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AlumnosService } from 'src/app/services/alumnos.service';
+import { FacadeService } from 'src/app/services/facade.service'; // Importar FacadeService
 
 @Component({
   selector: 'app-registro-alumnos',
@@ -29,15 +30,25 @@ export class RegistroAlumnosComponent implements OnInit {
     private router: Router,
     private location : Location,
     public activatedRoute: ActivatedRoute,
-    private alumnosService: AlumnosService
+    private alumnosService: AlumnosService,
+    private facadeService: FacadeService // Inyectar el servicio
   ) { }
 
   ngOnInit(): void {
+    // 1. Inicializar esquema
     this.alumno = this.alumnosService.esquemaAlumno();
-    // Rol del usuario
     this.alumno.rol = this.rol;
+    this.token = this.facadeService.getSessionToken();
 
-    console.log("Datos alumno: ", this.alumno);
+    // 2. VERIFICAR SI ES EDICIÓN
+    console.log("Datos alumno recibidos: ", this.datos_user);
+    
+    // Si llegan datos, rellenamos el formulario
+    if(this.datos_user && Object.keys(this.datos_user).length > 0){
+      this.editar = true;
+      this.alumno = { ...this.datos_user };
+      console.log("Modo edición activado para Alumno");
+    }
   }
 
   public regresar(){
@@ -56,17 +67,15 @@ export class RegistroAlumnosComponent implements OnInit {
     if(this.alumno.password == this.alumno.confirmar_password){
       this.alumnosService.registrarAlumno(this.alumno).subscribe(
         (response) => {
-          // Redirigir o mostrar mensaje de éxito
           alert("Alumno registrado exitosamente");
           console.log("Alumno registrado: ", response);
           if(this.token && this.token !== ""){
-            this.router.navigate(["alumnos"]);
+            this.router.navigate(["home"]); // O la ruta de lista de alumnos
           }else{
             this.router.navigate(["/"]);
           }
         },
         (error) => {
-          // Manejar errores de la API
           alert("Error al registrar alumno");
           console.error("Error al registrar alumno: ", error);
         }
@@ -79,7 +88,27 @@ export class RegistroAlumnosComponent implements OnInit {
   }
 
   public actualizar(){
-    // Lógica para actualizar los datos de un alumno existente
+    // 1. Validar (pasamos 'true' porque es edición, ignora passwords)
+    this.errors = {};
+    this.errors = this.alumnosService.validarAlumno(this.alumno, this.editar);
+    
+    if(Object.keys(this.errors).length > 0){
+      return false;
+    }
+
+    // 2. Llamar al servicio
+    console.log("Actualizando alumno: ", this.alumno);
+    this.alumnosService.editarAlumno(this.alumno).subscribe(
+      (response) => {
+        alert("Alumno actualizado correctamente");
+        console.log("Alumno actualizado: ", response);
+        this.router.navigate(["home"]); // Redirigir a la lista
+      },
+      (error) => {
+        alert("No se pudo actualizar el alumno");
+        console.error("Error al actualizar: ", error);
+      }
+    );
   }
 
   //Funciones para password
@@ -109,11 +138,10 @@ export class RegistroAlumnosComponent implements OnInit {
 
   //Función para detectar el cambio de fecha
   public changeFecha(event :any){
-    console.log(event);
-    console.log(event.value.toISOString());
-
-    this.alumno.fecha_nacimiento = event.value.toISOString().split("T")[0];
-    console.log("Fecha: ", this.alumno.fecha_nacimiento);
+    if(event.value){
+      this.alumno.fecha_nacimiento = event.value.toISOString().split("T")[0];
+      console.log("Fecha: ", this.alumno.fecha_nacimiento);
+    }
   }
 
   public soloLetras(event: KeyboardEvent) {

@@ -92,4 +92,8 @@ export class SidebarComponent implements OnInit {
   canSeeRegisterItem(): boolean {
     return this.isAdmin() || this.isTeacher();
   }
+
+  canSeeMaterias(): boolean {
+    return this.isAdmin() || this.isTeacher();
+  }
 }

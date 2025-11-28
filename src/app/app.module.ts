@@ -13,6 +13,7 @@ import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-l
 import { RegistroAdminComponent } from './partials/registro-admin/registro-admin.component';
 import { RegistroAlumnosComponent } from './partials/registro-alumnos/registro-alumnos.component';
 import { RegistroMaestrosComponent } from './partials/registro-maestros/registro-maestros.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 //Angular Material
 import {MatButtonModule} from '@angular/material/button';
@@ -50,6 +51,9 @@ import { NavbarUserComponent } from './partials/navbar-user/navbar-user.componen
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
 import { EliminarUserModalComponent } from './modals/eliminar-user-modal/eliminar-user-modal.component';
 import { GraficasScreenComponent } from './screens/graficas-screen/graficas-screen.component';
+import { RegistrarMateriaComponent } from './screens/materias/registrar-materia/registrar-materia.component';
+import { ListaMateriasComponent } from './screens/materias/lista-materias/lista-materias.component';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 
 @NgModule({
   declarations: [
@@ -68,7 +72,9 @@ import { GraficasScreenComponent } from './screens/graficas-screen/graficas-scre
     NavbarUserComponent,
     SidebarComponent,
     EliminarUserModalComponent,
-    GraficasScreenComponent
+    GraficasScreenComponent,
+    RegistrarMateriaComponent,
+    ListaMateriasComponent
   ],
   imports: [
     BrowserModule,
@@ -78,6 +84,7 @@ import { GraficasScreenComponent } from './screens/graficas-screen/graficas-scre
     MatDividerModule,
     MatIconModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     MatCardModule,
     MatRadioModule,
@@ -92,6 +99,7 @@ import { GraficasScreenComponent } from './screens/graficas-screen/graficas-scre
     MatTableModule,
     MatPaginatorModule,
     MatDialogModule,
+    NgxMaterialTimepickerModule,
     NgChartsModule
   ],
   providers: [

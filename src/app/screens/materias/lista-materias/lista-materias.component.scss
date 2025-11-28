@@ -1,0 +1,44 @@
+.container-fluid {
+    width: 100%;
+}
+
+.titulo-pantalla {
+    width: 100%;
+    font-family: 'Nexa-Bold', Arial, sans-serif;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.table-container {
+    overflow-x: auto; /* Permite scroll horizontal */
+    width: 100%;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    min-width: 1200px; /* Ancho mínimo para forzar el scroll si es necesario */
+}
+
+/* Estilos para encabezados de tabla */
+th.mat-header-cell {
+    background-color: #0092B8;
+    color: white;
+    font-family: 'Nexa-Bold', sans-serif;
+    font-size: 1rem;
+}
+
+td.mat-cell {
+    font-family: 'Nexa', sans-serif;
+    font-size: 0.9rem;
+    padding: 8px 10px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+::ng-deep .mat-mdc-form-field {
+    font-family: 'Nexa', Arial, sans-serif !important;
+}

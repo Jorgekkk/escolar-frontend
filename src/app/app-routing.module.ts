@@ -10,6 +10,10 @@ import { HomeScreenComponent } from './screens/home-screen/home-screen.component
 import { MaestrosScreenComponent } from './screens/maestros-screen/maestros-screen.component';
 import { GraficasScreenComponent } from './screens/graficas-screen/graficas-screen.component';
 
+// 1. IMPORTAMOS LOS NUEVOS COMPONENTES DE MATERIAS
+import { RegistrarMateriaComponent } from './screens/materias/registrar-materia/registrar-materia.component';
+import { ListaMateriasComponent } from './screens/materias/lista-materias/lista-materias.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -26,10 +30,15 @@ const routes: Routes = [
     component: DashboardLayoutComponent,
     children: [
       { path: 'home', component: HomeScreenComponent },
-      { path: 'administrador', component: AdminScreenComponent }, // Keep legacy route
+      { path: 'administrador', component: AdminScreenComponent },
       { path: 'alumnos', component: AlumnosScreenComponent },
       { path: 'maestros', component: MaestrosScreenComponent },
-      { path: 'graficas', component: GraficasScreenComponent }
+      { path: 'graficas', component: GraficasScreenComponent },
+
+      // 2. AGREGAMOS LAS RUTAS DE MATERIAS AQUÍ
+      { path: 'materias', component: ListaMateriasComponent },
+      { path: 'materias/registrar', component: RegistrarMateriaComponent },
+      { path: 'materias/editar/:id', component: RegistrarMateriaComponent },
     ]
   },
   // fallback route

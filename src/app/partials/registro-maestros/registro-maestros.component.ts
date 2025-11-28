@@ -57,11 +57,24 @@ export class RegistroMaestrosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // 1. Inicializar esquema vacío por defecto
     this.maestro = this.maestrosService.esquemaMaestro();
-    // Rol del usuario
     this.maestro.rol = this.rol;
 
-    console.log("Datos maestro: ", this.maestro);
+    // 2. VERIFICAR SI HAY DATOS PARA EDITAR (ESTA ES LA PARTE QUE FALTABA)
+    console.log("Datos recibidos en el hijo (Maestro): ", this.datos_user);
+    
+    // Si datos_user no es nulo y tiene propiedades, es edición
+    if(this.datos_user && Object.keys(this.datos_user).length > 0){
+      this.editar = true;
+      // Copiamos los datos al objeto del formulario
+      this.maestro = { ...this.datos_user };
+      
+      // Aseguramos que las materias sean un array para los checkboxes
+      if(!this.maestro.materias_json){
+        this.maestro.materias_json = [];
+      }
+    }
   }
 
   public regresar(){
@@ -79,17 +92,11 @@ export class RegistroMaestrosComponent implements OnInit {
     if(this.maestro.password == this.maestro.confirmar_password){
       this.maestrosService.registrarMaestro(this.maestro).subscribe(
         (response) => {
-          // Redirigir o mostrar mensaje de éxito
           alert("Maestro registrado exitosamente");
           console.log("Maestro registrado: ", response);
-          if(this.token && this.token !== ""){
-            this.router.navigate(["maestros"]);
-          }else{
-            this.router.navigate(["/"]);
-          }
+          this.router.navigate(["home"]); // O a /maestros
         },
         (error) => {
-          // Manejar errores de la API
           alert("Error al registrar maestro");
           console.error("Error al registrar maestro: ", error);
         }
@@ -102,7 +109,27 @@ export class RegistroMaestrosComponent implements OnInit {
   }
 
   public actualizar(){
+    // 1. Validar formulario (pasamos 'true' porque es edición)
+    this.errors = {};
+    this.errors = this.maestrosService.validarMaestro(this.maestro, this.editar);
+    
+    if(Object.keys(this.errors).length > 0){
+      return false;
+    }
 
+    // 2. Llamar al servicio
+    console.log("Actualizando maestro: ", this.maestro);
+    this.maestrosService.editarMaestro(this.maestro).subscribe(
+      (response) => {
+        alert("Maestro actualizado correctamente");
+        console.log("Maestro actualizado: ", response);
+        this.router.navigate(["home"]); // O redirigir a donde prefieras
+      },
+      (error) => {
+        alert("No se pudo actualizar el maestro");
+        console.error("Error al actualizar: ", error);
+      }
+    );
   }
 
   //Funciones para password
@@ -132,40 +159,30 @@ export class RegistroMaestrosComponent implements OnInit {
 
   //Función para detectar el cambio de fecha
   public changeFecha(event :any){
-    console.log(event);
-    console.log(event.value.toISOString());
-
-    this.maestro.fecha_nacimiento = event.value.toISOString().split("T")[0];
-    console.log("Fecha: ", this.maestro.fecha_nacimiento);
+    if(event.value){
+      this.maestro.fecha_nacimiento = event.value.toISOString().split("T")[0];
+    }
   }
 
   // Funciones para los checkbox
   public checkboxChange(event:any){
-    console.log("Evento: ", event);
     if(event.checked){
       this.maestro.materias_json.push(event.source.value)
     }else{
-      console.log(event.source.value);
-      this.maestro.materias_json.forEach((materia, i) => {
+      this.maestro.materias_json.forEach((materia: any, i: number) => {
         if(materia == event.source.value){
           this.maestro.materias_json.splice(i,1)
         }
       });
     }
-    console.log("Array materias: ", this.maestro);
   }
 
   public revisarSeleccion(nombre: string){
     if(this.maestro.materias_json){
-      var busqueda = this.maestro.materias_json.find((element)=>element==nombre);
-      if(busqueda != undefined){
-        return true;
-      }else{
-        return false;
-      }
-    }else{
-      return false;
+      var busqueda = this.maestro.materias_json.find((element: any)=>element==nombre);
+      return busqueda != undefined;
     }
+    return false;
   }
 
   public soloLetras(event: KeyboardEvent) {
@@ -179,5 +196,4 @@ export class RegistroMaestrosComponent implements OnInit {
       event.preventDefault();
     }
   }
-
 }
